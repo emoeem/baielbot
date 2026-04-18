@@ -50,12 +50,23 @@ impl LogHandle {
     }
 
     fn log(&mut self, msg: String, level: LogLevel) {
-        let message = format!("{}[{}]:{}", get_time_now(), get_log_level(level), msg);
+        let message = format!("{}  [{}]: {}\n", get_time_now(), get_log_level(level), msg);
         let result = self.file.write_all(message.as_bytes());
         match result {
             Ok(_) => {}
             Err(e) => {
                 eprintln!("无法写入Log{}", e);
+                panic!()
+            }
+        }
+    }
+
+    pub fn clear(&mut self) {
+        let result = self.file.set_len(0);
+        match result {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("无法清空Log:{}", e);
                 panic!()
             }
         }
@@ -77,4 +88,3 @@ impl LogHandle {
         self.log(msg, LogLevel::DEBUG);
     }
 }
-
